@@ -1,0 +1,101 @@
+import os
+import csv
+
+pedidos = []
+id = 1
+
+def borra_pantalla():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def registrar_pedido():
+    global id
+    borra_pantalla()
+    print("Registrar un nuevo pedido")
+    nombre_cliente = input("Nombre y apellido del cliente: ")
+    direccion = input("Dirección: ")
+    sector = input("Sector (Concepción, Chiguayante, Talcahuano, Hualpén, San Pedro): ")
+    dispensador_6 = int(input("Dispensadores de 6 litros: "))
+    dispensador_10 = int(input("Dispensadores de 10 litros: "))
+    dispensador_20 = int(input("Dispensadores de 20 litros: "))
+
+    if dispensador_6 + dispensador_10 + dispensador_20 > 0:
+        pedido = {
+            "id": id,
+            "cliente": nombre_cliente,
+            "direccion": direccion,
+            "sector": sector,
+            "dispensador_6": dispensador_6,
+            "dispensador_10": dispensador_10,
+            "dispensador_20": dispensador_20
+        }
+        pedidos.append(pedido)
+        id += 1
+        print("\tPEDIDO REGISTRADO")
+    else:
+        print("Número de dispensadores inválido")
+    input("Presiona enter para continuar")
+
+def listar_pedidos():
+    borra_pantalla()
+    print("Todos los pedidos:")
+    print("ID Cliente Dirección Sector Dispensador-6lts Dispensador-10lts Dispensador-20lts")
+    for pedido in pedidos:
+        print(f'{pedido["id"]} {pedido["cliente"]} {pedido["direccion"]} {pedido["sector"]} {pedido["dispensador_6"]} {pedido["dispensador_10"]} {pedido["dispensador_20"]}')
+    input("Presiona enter para continuar")
+
+def imprimir_hoja_ruta():
+    borra_pantalla()
+    print("Imprimir hoja de ruta")
+    sector = input("Seleccione un sector (Concepción, Chiguayante, Talcahuano, Hualpén, San Pedro): ")
+    #-------------------------------------------------------------------------------------------
+    with open(f'hoja_ruta_{sector}.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["ID", "Cliente", "Dirección", "Sector", "Disp.6lts", "Disp.10lts", "Disp.20lts"])
+        #------------------------------------------------------------------------------------- IMPRIMIR X .CSV
+        for pedido in pedidos:
+            if pedido["sector"] == sector:
+                writer.writerow([pedido["id"], pedido["cliente"], pedido["direccion"], pedido["sector"], pedido["dispensador_6"], pedido["dispensador_10"], pedido["dispensador_20"]])
+    print(f"Hoja de ruta para {sector} creada con éxito.")
+    input("Presione Enter para continuar...")
+
+def buscar_pedido_por_id():
+    borra_pantalla()
+    print("Buscar pedido por ID")
+    id_pedido = int(input("Ingrese el ID del pedido: "))
+    for pedido in pedidos:
+        if pedido["id"] == id_pedido:
+            print("Pedido encontrado:")
+            print("ID Cliente Dirección Sector Disp.6lts Disp.10lts Disp.20lts")
+            print(f'{pedido["id"]} {pedido["cliente"]} {pedido["direccion"]} {pedido["sector"]} {pedido["dispensador_6"]} {pedido["dispensador_10"]} {pedido["dispensador_20"]}')
+            break
+    else:
+        print("Pedido no encontrado.")
+    input("Presione Enter para continuar...")
+
+def el_menu():
+    while True:
+        borra_pantalla()
+        print("Sistema de gestión de pedidos CleanWasser")
+        print("1. Registrar pedido")
+        print("2. Listar todos los pedidos")
+        print("3. Imprimir hoja de ruta")
+        print("4. Buscar un pedido por ID")
+        print("5. Salir del programa")
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == '1':
+            registrar_pedido()
+        elif opcion == '2':
+            listar_pedidos()
+        elif opcion == '3':
+            imprimir_hoja_ruta()
+        elif opcion == '4':
+            buscar_pedido_por_id()
+        elif opcion == '5':
+            print("Saliendo del programa...")
+            break
+        else:
+            print("Opción no válida, intente de nuevo.")
+
+if __name__ == "__main__":
+    el_menu()
